@@ -1,0 +1,227 @@
+$baseColor: #4e57aa;
+$white    :#fff;
+$greyColor:#999;
+
+html,
+body,
+#app {
+    height                 : 100%;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing : antialiased;
+    text-rendering         : optimizeLegibility;
+    font-family            : Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+
+.marginTop {
+    margin-top: 2vh;
+}
+
+.marginRight2vw {
+    margin-right: 2vw;
+}
+
+.marginRight1vw {
+    margin-right: 1vw;
+}
+
+.marginLeft2vw {
+    margin-left: 2vw;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex2 {
+    flex: 2
+}
+
+.flex1 {
+    flex: 1
+}
+
+.flexBetween {
+    display        : flex;
+    justify-content: space-between;
+
+}
+
+
+.marginLeft1vw {
+    margin-left: 1vw;
+}
+
+.padding11 {
+    padding: 1vh 1vw;
+}
+
+.padding21 {
+    padding: 2vh 1vw;
+}
+
+.margin0 {
+    margin: 0
+}
+
+.greyShadow {
+    box-shadow: 0 2px 12px 0 rgba(78, 87, 170, 0.1);
+    transition: .3s;
+}
+
+//面包屑右边
+.breadcrumb {
+    .items {
+        position : absolute;
+        top      : 2vh;
+        right    : 4vh;
+        color    : #333333;
+        font-size: 1.1em;
+    }
+}
+
+//带搜索图标的icon
+.parent {
+    position: relative;
+
+    .searchInput {
+        position       : absolute;
+        right          : 0;
+        height         : 100%;
+        text-align     : center;
+        background     : $baseColor;
+        width          : 2vw;
+        right          : 0px;
+        top            : 0;
+        border-radius  : 0 5px 5px 0;
+        color          : $white;
+        display        : flex;
+        justify-content: center;
+        align-items    : center;
+    }
+}
+
+.inlineTitle {
+    font-size  : 1.2em;
+    margin     : 0 5px;
+    height     : 2vh;
+    line-height: 2vh;
+
+    &::before {
+        width       : 5px;
+        height      : 2vh;
+        display     : inline-block;
+        background  : $baseColor;
+        content     : '';
+        margin-right: 0.5vw;
+        margin-left : 0.5vw;
+
+    }
+}
+
+
+
+
+.posoRela {
+    position: relative;
+
+    h4 {
+        position: absolute;
+        top     : -2.5vw;
+    }
+}
+
+.super {
+    cursor: pointer;
+
+}
+
+.queryDiv {
+    display        : flex;
+    justify-content: center;
+    align-items    : center;
+    margin         : 2vh;
+
+    img {
+        width : 1vw;
+        height: 1vw;
+    }
+
+    span {
+        display    : inline-block;
+        margin-left: 0.4vw;
+        color      : #1890FF;
+        cursor     : pointer;
+    }
+}
+
+$width:40%;
+
+.dashBorder {
+    min-height: 20vh;
+    background: rgba(0, 0, 0, 0.06);
+    border    : 1px dashed rgba(0, 0, 0, 0.40);
+    padding   : 3vw;
+
+    // align-items: center;
+    // justify-content: center;
+    // display: flex;
+    .el-form {
+        width      : $width;
+        margin-left:calc((100% - #{$width})/2);
+
+        .el-form-item__label {
+            color         : rgba(255, 255, 255, 0.85);
+            letter-spacing: 0.5px;
+        }
+        
+
+        .superIcon {
+            color       : rgba(255, 255, 255, 0.85);
+            margin-right: 5px;
+        }
+
+        .super {
+            color: rgba(255, 255, 255, 0.85);
+        }
+    }
+
+    .btnDiv {
+        width     : 100%;
+        text-align: center;
+        margin-top: 5vh;
+    }
+}
+
+.trans {
+    text-align: center;
+    color     : #fff;
+
+    .pro {
+        display        : flex;
+        margin         : 4vh 20vw;
+        align-items    : center;
+        justify-content: center;
+
+        .progressWrap {
+            margin-left: 10px;
+            width      : 85%;
+            .el-progress-bar__outer{
+                background-color:rgba(255,255,255,0.20);
+            }
+            .el-progress__text{
+                color:#fff;
+                margin-left:1vw;
+            }
+        }
+    }
+    p{
+        margin-bottom:3vh;
+    }
+}
+
+.dashBorder {
+    .el-button--medium {
+        color      : #000;
+        font-weight: 700;
+    }
+}
