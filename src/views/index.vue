@@ -14,21 +14,39 @@
 <script>
 import { AppMain } from "./components";
 import CuHeaderIndex from "@/views/header";
+import { getKey, removeKey } from "@/utils/auth";
+import config from "../../public/config.js";
 export default {
   name: "Layout",
   components: {
     AppMain,
     CuHeaderIndex,
   },
-  computed: {
-   
-  },
+  computed: {},
   mounted() {
-    // console.log(this.$store.state)
+    this.checkUser();
   },
   methods: {
-    handleClickOutside() {
-     
+    checkUser: function () {
+      let username = this.getUser();
+      if (!username || username.length === 0) {
+        console.log("please login first!");
+        this.login();
+      }
+    },
+
+    getUser: function () {
+      let username = getKey("cas_user");
+      if (!username || username.length === 0) {
+        username = "";
+      }
+      return username;
+    },
+
+    login: function () {
+      window.location.replace(
+        config.redirectUrl
+      );
     },
   },
 };
@@ -38,7 +56,7 @@ export default {
 @import "~@/assets/mixin.scss";
 @import "~@/assets/variables.scss";
 .project_overview_box {
-  border-bottom: 1px solid #ddd;////**#f6f5f5cf;
+  border-bottom: 1px solid #ddd; ////**#f6f5f5cf;
   background: #ffffff;
   box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.2);
 }

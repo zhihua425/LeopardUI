@@ -10,7 +10,6 @@ const state = {
   //   secretKey:''
   // }
   setForm:{
-    ipPort:getKey('ipPort') ?  getKey('ipPort') :"",
     acceessKey: getKey('acceessKey') ?  getKey('acceessKey') :"",
     secretKey:getKey('secretKey') ?  getKey('secretKey') :""
   }
@@ -22,7 +21,6 @@ const getters = {
 const mutations = {
   setKey(state, data) {
     state.setForm = data;
-    setKey('ipPort',data.ipPort)
     setKey('acceessKey',data.acceessKey)
     setKey('secretKey',data.secretKey)
   },

@@ -4,22 +4,32 @@
     <el-row :gutter="12">
       <div class="green greyShadow padding21">
         <div class="dashBorder">
-          <el-form ref="setForm" :model="setForm" label-width="10vw">
-            <el-form-item  prop="ipPort"  label=" ip:port">
-              <el-input v-model="setForm.ipPort" 
-             placeholder="192.168.50.200:7480"></el-input>
+          <el-form
+            ref="setForm"
+            :model="setForm"
+            :rules="setFormRules"
+            label-width="10vw"
+          >
+            <el-form-item prop="acceessKey" label="acceess-key">
+              <el-input
+                v-model="setForm.acceessKey"
+                placeholder="1f921791d114045ba2d1bb70f5b5546f"
+              ></el-input>
             </el-form-item>
-             <el-form-item prop="acceessKey"  label="acceess-key">
-              <el-input v-model="setForm.acceessKey" placeholder="1f921791d114045ba2d1bb70f5b5546f"></el-input>
-            </el-form-item>
-             <el-form-item prop="secretKey"  label="secret-key">
-              <el-input v-model="setForm.secretKey" placeholder="0c124b8ee8b781b1414decae57c4f9f2"></el-input>
+            <el-form-item prop="secretKey" label="secret-key">
+              <el-input
+                v-model="setForm.secretKey"
+                placeholder="0c124b8ee8b781b1414decae57c4f9f2"
+              ></el-input>
             </el-form-item>
           </el-form>
           <div class="btnDiv">
-
-          <el-button plain @click="resetForm('setForm')" size="medium">取消</el-button>
-          <el-button plain  @click="submitForm('setForm')" size="medium">确定</el-button>
+            <el-button plain @click="resetForm('setForm')" size="medium"
+              >取消</el-button
+            >
+            <el-button plain @click="submitForm('setForm')" size="medium"
+              >确定</el-button
+            >
           </div>
         </div>
       </div>
@@ -94,9 +104,19 @@ export default {
   data() {
     return {
       titleArr: ["存储设置", "修改您的存储方式"],
-      form:{
-        file:'',
-        type:'.pdf',
+      form: {
+        file: "",
+        type: "pdf",
+      },
+      setFormRules: {
+        acceessKey: [
+          { required: true, message: "请输入access key", trigger: "blur" },
+          { min: 1, message: "长度不少于1个字符", trigger: "blur" },
+        ],
+        secretKey: [
+          { required: true, message: "请输入secret key", trigger: "blur" },
+          { min: 1, message: "长度不少于1个字符", trigger: "blur" },
+        ],
       },
       dialogFormVisible: false,
       dialogForm: {
@@ -113,22 +133,24 @@ export default {
     };
   },
   methods: {
-   submitForm(){
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$store.commit("setUp/setKey", this.setForm);
+          this.$message.success("已添加到cookie");
+        }
+      });
+    },
+    resetForm(formName) {
+      //  this[formName] = {};
 
-     this.$store.commit('setUp/setKey', this.setForm)
-    this.$message.success('已添加到cookie');
-
-   },
-   resetForm(formName) {
-    //  this[formName] = {};
- 
-   this.$nextTick(() => {
-    this.$refs[formName].resetFields()
-   });
-
+      this.$nextTick(() => {
         this.$refs[formName].resetFields();
-      },
-   showSuper() {
+      });
+
+      this.$refs[formName].resetFields();
+    },
+    showSuper() {
       this.dialogFormVisible = true;
     },
   },
@@ -138,14 +160,14 @@ export default {
 
 <style lang="scss">
 //@dialog
-.el-dialog{
-    width:30%;
+.el-dialog {
+  width: 30%;
 }
-.el-dialog__body{
-    padding: 30px 5vw;
-    .el-select{
-      width:100%;
-    }
+.el-dialog__body {
+  padding: 30px 5vw;
+  .el-select {
+    width: 100%;
+  }
 }
 </style>
 <style lang="scss" scoped>

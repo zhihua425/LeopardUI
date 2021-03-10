@@ -1,8 +1,11 @@
 // collection.js
+import {
+  getKey,setToken
+} from '@/utils/auth'
 import axios from 'axios'
 import Urls from '@/utils/urls'
 const state = {
-  getDataUrl: Urls,
+  getDataUrl: Urls.uris,
   
 
 }
@@ -11,30 +14,45 @@ const getters = {
 }
 const mutations = {
 
-  setTop10Xl(state, data) {
-    state.top10Xl = data;
-  },
+ 
 
 
 }
 const actions = {
 
-  async getSpeechAnalysisTable(context, item) {
-    try {
-      const response = await axios.get(state.getDataUrl.create, {
-        params: {
-          sort: item,
-        }
-      });
-      let data = response.data
-      if (data.code === 200) {
-        context.commit("setTop10Xl", data.data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  convert({
+    commit
+  }, imageInfo) {
+    const key = getKey('acceessKey') + ',' + getKey('secretKey');
+    return new Promise((resolve, reject) => {
+      axios.post(state.getDataUrl.imageConvert,
+          imageInfo, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'SRCKey': key,
+              'DestKey': key
+            }
+          })
+        .then((res) => {
+          if (res.status == 200) {
 
-  },
+            const data = res.data;
+           
+            if (data.id) {
+              resolve();
+              setToken('imageId', data.id)
+            } else {
+              reject(data.error)
+            }
+          }
+
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+
+  }
 
 
 

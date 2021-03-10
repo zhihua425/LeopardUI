@@ -1,8 +1,11 @@
 // collection.js
+import {
+  getKey,setToken
+} from '@/utils/auth'
 import axios from 'axios'
 import Urls from '@/utils/urls'
 const state = {
-  getDataUrl: Urls,
+  getDataUrl:  Urls.uris,
  
 
 }
@@ -11,29 +14,43 @@ const getters = {
 }
 const mutations = {
 
-  setTop10Xl(state, data) {
-    state.top10Xl = data;
-  },
-
 
 }
 const actions = {
+  convert({
+    commit
+  }, videoInfo) {
+    const key = getKey('acceessKey') + ',' + getKey('secretKey');
+    console.log(key,videoInfo)
+    return new Promise((resolve, reject) => {
+      axios.post(state.getDataUrl.videoConvert,
+          videoInfo, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'SRCKey': key,
+              'DestKey': key
+            }
+          })
+        .then((res) => {
+          if (res.status == 200) {
+            const data = res.data;
+           
+            if (data.id) {
+              resolve();
+              setToken('videoId', data.id)
+            } else {
+              reject(data.error)
+            }
+          }
 
-  async getSpeechAnalysisTable(context, item) {
-    try {
-      const response = await axios.get(state.getDataUrl.create, {
-        params: {
-          sort: item,
-        }
-      });
-      let data = response.data
-      if (data.code === 200) {
-      }
-    } catch (error) {
-      console.error(error);
-    }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
 
-  },
+  }
+  
 
 
 

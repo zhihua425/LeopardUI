@@ -16,18 +16,28 @@
       </el-menu>
     </div>
     <div class="i_header_right">
-      <el-button type="primary" @click="login">登录</el-button>
+      <div v-if="!userCookie">
+        <el-button type="primary" @click="login">登录</el-button>
+      </div>
+      <div v-else>
+        <el-avatar> {{ userCookie }} </el-avatar>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import Tool from "@/utils/tool.js";
+import config from "../../public/config.js";
+import { getKey, removeKey } from "@/utils/auth";
 export default {
   name: "headerindex",
   computed: {
-    
-    
+    userCookie() {
+      let username = getKey("cas_user");
+      console.log(username);
+      return username;
+    },
   },
   data() {
     return {
@@ -37,8 +47,8 @@ export default {
   watch: {
     $route: {
       handler: function (val, oldVal) {
-        if(val.name !== oldVal.name){
-          this.activeIndex = val.name
+        if (val.name !== oldVal.name) {
+          this.activeIndex = val.name;
         }
       },
       // 深度观察监听
@@ -56,15 +66,9 @@ export default {
       }
     },
     login() {
-      this.$router.push("/login");
+      window.location.replace(config.redirectUrl);
     },
-    changeSidebar() {
-      this.$store.dispatch("app/toggleSideBar", { withoutAnimation: false });
-    },
-    toggleSideBar() {
-      console.log("toggle");
-      this.$store.dispatch("app/toggleSideBar");
-    },
+
     goHome() {
       this.$router.push("/");
     },

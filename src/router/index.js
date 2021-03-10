@@ -21,13 +21,13 @@ const routes = [
   },
  
   
-  // {
-  //   path: '/',
-  //   component: Home,
-  //   redirect: {name: 'login'}
-  //   // name: 'storeAnalysisDetail',
-  //   // component: StoreDataAnalysisDetail
-  // },
+  {
+    path: '/',
+    component: Layout,
+    redirect: {name: 'overview'}
+    // name: 'storeAnalysisDetail',
+    // component: StoreDataAnalysisDetail
+  },
  
  
   {
@@ -75,6 +75,7 @@ const routes = [
 
 
 const router = new VueRouter({
+  mode: 'history',  //去掉url中的#
   routes
 })
 

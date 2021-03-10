@@ -1,4 +1,4 @@
-# ds-01
+# LeopardUI
 
 ## Project setup
 ```

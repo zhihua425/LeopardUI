@@ -13,10 +13,12 @@
               label-width="10vw"
               autocomplete="on"
             >
-              <el-form-item label="选择文件：" ref="srcpath" prop="srcpath">
+              <el-form-item label="选择原文件：" ref="srcpath" prop="srcpath">
                 <el-input
+                :title="docForm.srcpath"
                   v-model="docForm.srcpath"
-                  placeholder="请输入地址(S3://IP: port/xxxxx或域名端口)"
+                  placeholder="输入地址(如:http://192.168.50.243:9000/bosc/cgroup-v2.txt)"
+                  @change="writeDestpath"
                 ></el-input>
               </el-form-item>
               <el-form-item
@@ -26,23 +28,18 @@
               >
                 <el-input
                   v-model="docForm.destpath"
+                  :title="docForm.destpath"
+                  :disabled="true"
                   placeholder="请输入地址(S3://IP: port/xxxxx或域名端口)"
                 ></el-input>
               </el-form-item>
               <el-form-item label="选择格式：" prop="format">
                 <el-select v-model="docForm.format" placeholder="">
                   <el-option label="pdf" value="pdf"></el-option>
-                  <el-option label="txt" value="txt"></el-option>
-                  <el-option label="doc" value="doc"></el-option>
-                  <el-option label="docx" value="docx"></el-option>
-                  <el-option label="ppt" value="ppt"></el-option>
-                  <el-option label="pptx" value="pptx"></el-option>
+                 
                 </el-select>
               </el-form-item>
-              <el-form-item label="">
-                <i class="el-icon-edit-outline superIcon"></i>
-                <span class="super" @click="showSuper">高级选项</span>
-              </el-form-item>
+             
             </el-form>
             <div class="btnDiv">
               <el-button plain @click="submitForm('docForm')" size="medium"
@@ -78,55 +75,7 @@
     </el-row>
     <illustrate></illustrate>
     <pannel :data="docData"></pannel>
-    <el-dialog title="高级选项" :visible.sync="dialogFormVisible">
-      <el-form :model="formDia">
-        <el-form-item label="视频解析度：" :label-width="formLabelWidth">
-          <el-input
-            v-model="formDia.name"
-            placeholder="请输入"
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="视频码率：" :label-width="formLabelWidth">
-          <el-select v-model="formDia.region" placeholder="已选择内容">
-            <el-option label="码率一" value="shanghai"></el-option>
-            <el-option label="码率二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="音频采样率：" :label-width="formLabelWidth">
-          <el-input
-            v-model="formDia.name"
-            placeholder="请输入"
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="音频码率：" :label-width="formLabelWidth">
-          <el-select v-model="formDia.region" placeholder="已选择内容">
-            <el-option label="码率一" value="shanghai"></el-option>
-            <el-option label="码率二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="视频编码器：" :label-width="formLabelWidth">
-          <el-input
-            v-model="formDia.name"
-            placeholder="请输入"
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="音频编码器：" :label-width="formLabelWidth">
-          <el-select v-model="formDia.region" placeholder="已选择内容">
-            <el-option label="码率一" value="shanghai"></el-option>
-            <el-option label="码率二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
-      </div>
-    </el-dialog>
+   
   </div>
 </template>
 <script>
@@ -170,13 +119,13 @@ export default {
         srcpath: [
           { required: true, message: "请输入源文件地址", trigger: "blur" },
           { min: 10, message: "长度不少于10个字符", trigger: "blur" },
-          { required: true, trigger: "blur", validator: validateUrlPath },
+          // { required: true, trigger: "blur", validator: validateUrlPath },
         ],
-        destpath: [
-          { required: true, message: "请输入源文件地址", trigger: "blur" },
-          { min: 10, message: "长度不少于10个字符", trigger: "blur" },
-          { required: true, trigger: "blur", validator: validateUrlPath },
-        ],
+        // destpath: [
+          // { required: true, message: "请输入源文件地址", trigger: "blur" },
+          // { min: 10, message: "长度不少于10个字符", trigger: "blur" },
+          // { required: true, trigger: "blur", validator: validateUrlPath },
+        // ],
         format: [
           {
             format: "array",
@@ -194,17 +143,13 @@ export default {
         "如何转换音视频格式",
         "选择需要转换的文件地址，选择要转换的格式，转换完成后将存入计算机原来的位置，过程就是如此简单快捷。",
       ],
-      dialogFormVisible: false,
-      formDia: {
-        file: false,
-        type: [],
-        name: "",
-        region: "",
-      },
-      formLabelWidth: "120px",
+     
     };
   },
   methods: {
+    writeDestpath(){
+      this.docForm.destpath = this.docForm.srcpath + '.' + this.docForm.format;
+    },
     submitForm(formName) {
       if(this.transferType != 'normal'){
         this.transferType = 'normal'
@@ -214,23 +159,22 @@ export default {
           let paramS3 = {};
             //判断是否为S3地址
           if (true) {
+            const srchost1 = this.docForm.srcpath;
+            const desthost1 = this.docForm.destpath
             const srchost = validHostPort(this.docForm.srcpath);
             const desthost = validHostPort(this.docForm.destpath);
             paramS3 = {
               srchost: srchost,
               desthost: desthost,
+              srcpath:srchost1.substr(srchost1.match(srchost).index + srchost.length +1).replace('/',':'),
+              destpath:desthost1.substr(desthost1.match(desthost).index + desthost.length +1).replace('/',':'),
             };
           }
           this.transferType = "progress";
-          // setTimeout(() => {
-          //   this.transferType = "success";
-          // }, 1000);
-          // setTimeout(() => {
-          //   this.transferType = "lose";
-          // }, 2000);
           this.$store
             .dispatch("doc/convert", { ...this.docForm, ...paramS3 })
             .then(() => {
+              this.percentage = 100;
               this.$message.success("转换成功！");
               this.transferType = "success";
             })
@@ -247,9 +191,7 @@ export default {
     endTransfer(){
        this.transferType = 'normal'
     },
-    showSuper() {
-      this.dialogFormVisible = true;
-    },
+   
   },
 };
 </script>

@@ -1,6 +1,6 @@
 // collection.js
 import {
-  getKey
+  getKey,setToken
 } from '@/utils/auth'
 import axios from 'axios'
 import Urls from '@/utils/urls';
@@ -34,15 +34,12 @@ const actions = {
             }
           })
         .then((res) => {
-          console.log(res)
           if (res.status == 200) {
-
-            const {
-              data
-            } = res.data;
+            const data = res.data;
+           
             if (data.id) {
-              setToken(docId, data.id)
               resolve();
+              setToken('docId', data.id)
             } else {
               reject(data.error)
             }
