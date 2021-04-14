@@ -4,8 +4,8 @@
 
 const path = require('path')
 
-import config from '/public/config';
-const basic = process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro
+// import config from '../public/static/config';
+const basic = process.env.NODE_ENV === 'development' ? window.config.baseUrl.dev : window.config.baseUrl.pro
 
 module.exports = {
   dev: {

@@ -10,7 +10,7 @@
                 <el-input
                   v-model="form.srcpath"
                   :title="form.srcpath"
-                  placeholder="输入地址(如:http://192.168.50.243:9000/bosc/cgroup-v2.txt)"
+                  placeholder="输入地址(如:http://192.168.50.243:9000/bosc/boy.jpeg)"
                   @change="writeDestpath"
                 ></el-input>
               </el-form-item>
@@ -23,7 +23,7 @@
                   v-model="form.destpath"
                   :title="form.destpath"
                   :disabled="true"
-                  placeholder="请输入地址(S3://IP: port/xxxxx或域名端口)"
+                  placeholder="http://192.168.50.243:9000/bosc/boy.jpeg.png"
                 ></el-input>
               </el-form-item>
               <el-form-item label="选择格式：" prop="format">
@@ -55,12 +55,12 @@
           <div v-else-if="transferType == 'lose'" class="trans">
             <div><img :src="getImgUrlSvg('lose')" alt="" /></div>
             <p>转换失败</p>
-            <el-button plain size="medium" @click="submitForm('form')">继续转换</el-button>
+            <el-button plain size="medium" @click="endTransfer">继续转换</el-button>
           </div>
           <div v-else-if="transferType == 'success'" class="trans">
             <div><img :src="getImgUrlSvg('success')" alt="" /></div>
             <p>转换成功</p>
-            <el-button plain size="medium" @click="submitForm('form')">继续转换</el-button>
+            <el-button plain size="medium" @click="endTransfer">继续转换</el-button>
           </div>
         </div>
       </div>
@@ -76,6 +76,7 @@ import { mapState, mapActions } from "vuex";
 import Title from "@/views/components/title";
 import illustrate from "@/views/components/illustrate";
 import pannel from "@/views/components/pannel";
+import qs from 'qs';
 const validateUrlPath = (rule, value, callback) => {
   if (!validURL(value)) {
     callback(new Error("url格式错误"));
@@ -159,7 +160,7 @@ export default {
           }
           this.transferType = "progress";
           this.$store
-            .dispatch("picture/convert", { ...this.form, ...paramS3 })
+            .dispatch("picture/convert", qs.stringify({ ...this.form, ...paramS3 }))
             .then(() => {
               this.percentage = 100;
               this.$message.success("转换成功！");

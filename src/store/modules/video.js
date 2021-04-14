@@ -1,19 +1,23 @@
 // collection.js
 import {
-  getKey,setToken
+  getKey,
+  setKey
 } from '@/utils/auth'
 import axios from 'axios'
 import Urls from '@/utils/urls'
+
 const state = {
-  getDataUrl:  Urls.uris,
- 
+  getDataUrl: Urls.uris,
+  percentage: 0,
 
 }
 const getters = {
 
 }
 const mutations = {
-
+  setProgress(state, pro) {
+    state.percentage = pro.substr(0, pro.length -1) * 1;
+  }
 
 }
 const actions = {
@@ -21,7 +25,6 @@ const actions = {
     commit
   }, videoInfo) {
     const key = getKey('acceessKey') + ',' + getKey('secretKey');
-    console.log(key,videoInfo)
     return new Promise((resolve, reject) => {
       axios.post(state.getDataUrl.videoConvert,
           videoInfo, {
@@ -34,10 +37,10 @@ const actions = {
         .then((res) => {
           if (res.status == 200) {
             const data = res.data;
-           
+
             if (data.id) {
-              resolve();
-              setToken('videoId', data.id)
+              resolve(data.id);
+              setKey('videoId', data.id)
             } else {
               reject(data.error)
             }
@@ -47,10 +50,33 @@ const actions = {
         .catch((err) => {
           console.log(err)
         })
-    })
+    }).catch((e) => {})
 
+  },
+  //进度
+  progress({
+    commit
+  }, item) {
+    // return new Promise((resolve, reject) => {
+    axios.get(state.getDataUrl.videoProgress + '/' + item)
+      // axios.get(state.getDataUrl.videoProgress ,{params:{id:item}})
+      .then((res) => {
+        if (res.status == 200) {
+          const data = res.data;
+          commit("setProgress", data.progress);
+          // if (data.progress) {
+          //   resolve(data.progress);
+          // } else {
+          //   reject(res.data.error)
+          // }
+        }
+
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    // }).catch((e) => {})
   }
-  
 
 
 

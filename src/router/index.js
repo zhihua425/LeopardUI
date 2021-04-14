@@ -75,8 +75,19 @@ const routes = [
 
 
 const router = new VueRouter({
-  mode: 'history',  //去掉url中的#
+  // mode: 'history',  //去掉url中的#
   routes
 })
+
+// router.beforeEach((to, from, next) => {
+  // console.log('开始页面切换');
+  // console.log(to.fullPath)
+  // var tempId = Utils.getCookie('temp-id');
+  // var userInfo = sessionStorage.getItem('ssm_u_info');
+  // if(to.fullPath != '/login' && (tempId == null || tempId == '' || userInfo == null || userInfo == '')){
+    // window.location.href = '/login';
+  // }
+//   next();
+// });
 
 export default router

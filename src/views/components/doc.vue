@@ -30,7 +30,7 @@
                   v-model="docForm.destpath"
                   :title="docForm.destpath"
                   :disabled="true"
-                  placeholder="请输入地址(S3://IP: port/xxxxx或域名端口)"
+                  placeholder="http://192.168.50.243:9000/bosc/cgroup-v2.txt.pdf"
                 ></el-input>
               </el-form-item>
               <el-form-item label="选择格式：" prop="format">
@@ -63,12 +63,12 @@
           <div v-else-if="transferType == 'lose'" class="trans">
             <div><img :src="getImgUrlSvg('lose')" alt=""></div>
             <p>转换失败</p>
-            <el-button plain size="medium" @click="submitForm('docForm')">继续转换</el-button>
+            <el-button plain size="medium" @click="endTransfer">继续转换</el-button>
           </div>
           <div v-else-if="transferType == 'success'" class="trans">
             <div><img :src="getImgUrlSvg('success')" alt=""></div>
             <p>转换成功</p>
-            <el-button plain size="medium" @click="submitForm('docForm')">继续转换</el-button>
+            <el-button plain size="medium" @click="endTransfer">继续转换</el-button>
           </div>
         </div>
       </div>
@@ -85,6 +85,7 @@ import { mapState, mapActions } from "vuex";
 import Title from "@/views/components/title";
 import illustrate from "@/views/components/illustrate";
 import pannel from "@/views/components/pannel";
+import qs from 'qs';
 const validateUrlPath = (rule, value, callback) => {
   if (!validURL(value)) {
     callback(new Error("url格式错误"));
@@ -136,12 +137,12 @@ export default {
         ],
       },
       docData: [
-        "如何转换音视频格式",
-        "选择需要转换的文件地址，选择要转换的格式，转换完成后将存入计算机原来的位置，过程就是如此简单快捷。",
-        "如何转换音视频格式",
-        "选择需要转换的文件地址，选择要转换的格式，转换完成后将存入计算机原来的位置，过程就是如此简单快捷。",
-        "如何转换音视频格式",
-        "选择需要转换的文件地址，选择要转换的格式，转换完成后将存入计算机原来的位置，过程就是如此简单快捷。",
+        "Step 1",
+        "输入S3 存储中文件的地址 "+ "\n" +"例如:"+ "\n" +"http://192.168.1.10:9000/mybucket/sample.wmv",
+        "Step 2",
+        "选择需要转换的文件格式 "+ "\n" +" 音视频转码还额外支持更复杂的高级选项"+ "\n" +"通过 API 调用可以支持更多更丰富的功能，请参考API文档",
+        "Step 3",
+        "点击转换按钮 "+ "\n" +" 转换成功后的文件会自动放在原S3存储中相同路径下",
       ],
      
     };
@@ -172,7 +173,7 @@ export default {
           }
           this.transferType = "progress";
           this.$store
-            .dispatch("doc/convert", { ...this.docForm, ...paramS3 })
+            .dispatch("doc/convert", qs.stringify({ ...this.docForm, ...paramS3 }))
             .then(() => {
               this.percentage = 100;
               this.$message.success("转换成功！");

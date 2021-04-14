@@ -15,7 +15,6 @@ const getters = {
 const mutations = {
 
 
-
 }
 const actions = {
 
@@ -49,7 +48,7 @@ const actions = {
         .catch((err) => {
           console.log(err)
         })
-    })
+    }).catch((e) => {})
 
   }
 

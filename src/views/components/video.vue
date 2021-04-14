@@ -10,7 +10,7 @@
                 <el-input
                   v-model="form.srcpath"
                   :title="form.srcpath"
-                  placeholder="输入地址(如:http://192.168.50.243:9000/bosc/cgroup-v2.txt)"
+                  placeholder="输入地址(如:http://192.168.50.243:9000/bosc/Wildlife.wmv)"
                   @change="writeDestpath"
                 ></el-input>
               </el-form-item>
@@ -23,11 +23,15 @@
                   v-model="form.destpath"
                   :title="form.destpath"
                   :disabled="true"
-                  placeholder="请输入地址(S3://IP: port/xxxxx或域名端口)"
+                  placeholder="http://192.168.50.243:9000/bosc/Wildlife.wmv.mp4"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="选择格式：" prop="format" >
-                <el-select v-model="form.format" placeholder="MP4" @change="writeDestpath($event)">
+              <el-form-item label="选择格式：" prop="format">
+                <el-select
+                  v-model="form.format"
+                  placeholder="MP4"
+                  @change="writeDestpath($event)"
+                >
                   <el-option label="MP4" value="MP4"></el-option>
                   <el-option label="MP3" value="MP3"></el-option>
                   <el-option label="WMV" value="WMV"></el-option>
@@ -56,19 +60,21 @@
               ></el-progress>
             </div>
             <p>转换进程</p>
-            <el-button plain size="medium" @click="endTransfer">终止转换</el-button>
+            <el-button plain size="medium" @click="endTransfer"
+              >终止转换</el-button
+            >
           </div>
           <div v-else-if="transferType == 'lose'" class="trans">
             <div><img :src="getImgUrlSvg('lose')" alt="" /></div>
             <p>转换失败</p>
-            <el-button plain size="medium" @click="submitForm('form')"
+            <el-button plain size="medium" @click="endTransfer"
               >继续转换</el-button
             >
           </div>
           <div v-else-if="transferType == 'success'" class="trans">
             <div><img :src="getImgUrlSvg('success')" alt="" /></div>
             <p>转换成功</p>
-            <el-button plain size="medium" @click="submitForm('form')"
+            <el-button plain size="medium" @click="endTransfer"
               >继续转换</el-button
             >
           </div>
@@ -169,6 +175,7 @@ import { mapState, mapActions } from "vuex";
 import Title from "@/views/components/title";
 import illustrate from "@/views/components/illustrate";
 import pannel from "@/views/components/pannel";
+import qs from "qs";
 const validateUrlPath = (rule, value, callback) => {
   if (!validURL(value)) {
     callback(new Error("url格式错误"));
@@ -180,19 +187,26 @@ const validateUrlPath = (rule, value, callback) => {
 export default {
   name: "videos",
   computed: {
-    // ...mapState("video", ["no33ee4ew8tes"]),
+    ...mapState("video", ["percentage"]),
   },
   components: {
     Title,
     illustrate,
     pannel,
   },
+  watch: {
+    percentage(n,o) {
+      if (n == 100) {
+        this.percentage = 0;
+        this.transferType = "success";
+      }
+    },
+  },
   mixins: [Tool],
   data() {
     return {
       titleArr: ["音视频转码", "音频视频转换格式"],
       transferType: "normal",
-      percentage: 10,
       customColor: "#FFFFFF",
       form: {
         srcpath: "",
@@ -235,36 +249,43 @@ export default {
   },
 
   methods: {
-    writeDestpath(){
-      this.form.destpath = this.form.srcpath + '.' + this.form.format;
+    writeDestpath() {
+      this.form.destpath = this.form.srcpath + "." + this.form.format;
     },
     submitForm(formName) {
       if (this.transferType != "normal") {
         this.transferType = "normal";
       }
-       this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           let paramS3 = {};
-            //判断是否为S3地址
+          //判断是否为S3地址
           if (true) {
             const srchost1 = this.form.srcpath;
-            const desthost1 = this.form.destpath
+            const desthost1 = this.form.destpath;
             const srchost = validHostPort(this.form.srcpath);
             const desthost = validHostPort(this.form.destpath);
             paramS3 = {
               srchost: srchost,
               desthost: desthost,
-              srcpath:srchost1.substr(srchost1.match(srchost).index + srchost.length +1).replace('/',':'),
-              destpath:desthost1.substr(desthost1.match(desthost).index + desthost.length +1).replace('/',':'),
+              srcpath: srchost1
+                .substr(srchost1.match(srchost).index + srchost.length + 1)
+                .replace("/", ":"),
+              destpath: desthost1
+                .substr(desthost1.match(desthost).index + desthost.length + 1)
+                .replace("/", ":"),
             };
           }
           this.transferType = "progress";
           this.$store
-            .dispatch("video/convert", { ...this.form,...this.DiaForm, ...paramS3 })
-            .then(() => {
-              this.percentage = 100;
-              this.$message.success("转换成功！");
-              this.transferType = "success";
+            .dispatch(
+              "video/convert",
+              qs.stringify({ ...this.form, ...this.DiaForm, ...paramS3 })
+            )
+            .then((res) => {
+              const count = 0;
+              this.getProgress(res,count);
+              this.$message.success("转码任务已创建！");
             })
             .catch((e) => {
               this.$message.error(e);
@@ -276,11 +297,42 @@ export default {
         }
       });
     },
+    getProgress(res, count) {
+      this.$store.dispatch("video/progress", res).then(() => {
+        let _this = this;
+        if (_this.percentage == 0) {
+          count++;
+          if(count == '5'){
+            this.$message.warning("转码失败！");
+            this.transferType = "lose";
+            return;
+          }
+          setTimeout(function () {
+            _this.getProgress(res, count);
+          }, 5000);
+        } else {
+          
+          if(_this.percentage < 100){
+
+           setTimeout(function () {
+             _this.getProgress(res, count);
+          }, 5000);
+          }else if (_this.percentage == 100){
+
+            _this.transferType = "success";
+            _this.percentage = 0;
+            this.$message.success("转码成功！");
+          }
+        }
+      });
+    },
+    
     showSuper() {
       this.dialogFormVisible = true;
     },
-    endTransfer(){
-       this.transferType = 'normal'
+    endTransfer() {
+      this.transferType = "normal";
+      // location.reload();
     },
   },
 };

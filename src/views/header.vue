@@ -20,7 +20,12 @@
         <el-button type="primary" @click="login">登录</el-button>
       </div>
       <div v-else>
-        <el-avatar> {{ userCookie }} </el-avatar>
+        <el-dropdown @command="handleCommand">
+          <el-avatar> {{ userCookie }} </el-avatar>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="logout">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </div>
   </div>
@@ -28,27 +33,28 @@
 
 <script>
 import Tool from "@/utils/tool.js";
-import config from "../../public/config.js";
+// import config from "../../public/static/config.js";
 import { getKey, removeKey } from "@/utils/auth";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "headerindex",
   computed: {
+    ...mapState("user", ["activeIndex"]),
     userCookie() {
       let username = getKey("cas_user");
-      console.log(username);
       return username;
     },
   },
   data() {
     return {
-      activeIndex: "overview",
+      // activeIndex: "overview",
     };
   },
   watch: {
     $route: {
       handler: function (val, oldVal) {
         if (val.name !== oldVal.name) {
-          this.activeIndex = val.name;
+          this.$store.commit("user/changeActive", val.name);
         }
       },
       // 深度观察监听
@@ -59,14 +65,21 @@ export default {
   methods: {
     //menu选择
     handleSelect(key, keyPath) {
-      this.activeIndex = key;
+      this.$store.commit("user/changeActive", key);
       const current = this.$route.path.split("/");
       if (current[2] !== key) {
         this.$router.push("/home/" + key);
       }
     },
     login() {
-      window.location.replace(config.redirectUrl);
+      window.location.replace(window.config.redirectUrl.login);
+    },
+    //退出登陆
+    handleCommand(command) {
+      if (command == "logout") {
+        removeKey("cas_user");
+        window.location.href = window.config.redirectUrl.logout;
+      }
     },
 
     goHome() {

@@ -5,19 +5,20 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import common from '../../utils/urls'
 const state = {
   getDataUrl: common.uris,
+  activeIndex:"overview",
   token: getToken(),
   name: '',
   avatar: '',
   introduction: '',
-  roles: []
+  roles: [],
   
 }
 const getters = {
   
 }
 const mutations = {
-  SET_TOKEN: (state, token) => {
-    state.token = token
+  changeActive: (state, token) => {
+    state.activeIndex = token
   },
  
 

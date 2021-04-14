@@ -15,7 +15,7 @@
 import { AppMain } from "./components";
 import CuHeaderIndex from "@/views/header";
 import { getKey, removeKey } from "@/utils/auth";
-import config from "../../public/config.js";
+// import config from "../../public/static/config.js";
 export default {
   name: "Layout",
   components: {
@@ -23,15 +23,15 @@ export default {
     CuHeaderIndex,
   },
   computed: {},
-  mounted() {
-    this.checkUser();
+  created() {
+    // this.checkUser();
   },
   methods: {
     checkUser: function () {
       let username = this.getUser();
       if (!username || username.length === 0) {
-        console.log("please login first!");
         this.login();
+     
       }
     },
 
@@ -45,7 +45,7 @@ export default {
 
     login: function () {
       window.location.replace(
-        config.redirectUrl
+        window.config.redirectUrl.login
       );
     },
   },
